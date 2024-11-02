@@ -1,29 +1,22 @@
 <template>
-  <div>
-    <iframe :src="pdfUrl" width="100%" height="680"></iframe>
-  </div>
+  <iframe :key="pdfUrl" :src="pdfUrl" width="100%" height="680"></iframe>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 
 const props = defineProps<{
   page: number;
 }>();
 
-const pageNum = ref(0);
 
 const pdfUrl = computed<string>(() => {
   const baseUrl = new URL("@/assets/source.pdf", import.meta.url).href;
-  return `${baseUrl}#page=${pageNum.value}`;
+  const timestamp = Date.now();
+
+  return `${baseUrl}?t=${timestamp}#page=${props.page}`;
 });
 
-watch(
-  () => props.page,
-  () => {
-    pageNum.value = props.page;
-  },
-);
 </script>
 
 <style scoped></style>

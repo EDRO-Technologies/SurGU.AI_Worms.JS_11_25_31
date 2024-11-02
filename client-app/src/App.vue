@@ -10,7 +10,7 @@
         <ChatBox />
       </el-tab-pane>
       <el-tab-pane label="Документ" name="second">
-        <PdfView :page="pdfPage" />
+        <PdfView :page="computedPdfPage" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -19,14 +19,20 @@
 <script setup lang="ts">
 import ChatBox from "./components/ChatBox.vue";
 import ChatsContainer from "./components/ChatsContainer.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import PdfView from "@/components/PdfView.vue";
 
 const activeName = ref("first");
 const pdfPage = ref(1);
 
+const computedPdfPage = computed({
+  get: () => pdfPage.value,
+  set: (newValue) => pdfPage.value = newValue,
+})
+
 const navigateToPdf = (pageNum: number) => {
   activeName.value = "second";
-  pdfPage.value = pageNum;
+  computedPdfPage.value = pageNum;
+  console.log(computedPdfPage.value);
 };
 </script>
