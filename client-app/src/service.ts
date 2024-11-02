@@ -3,13 +3,7 @@ import axios from "axios";
 
 
 export const sendAllMessages = async (chats: unknown) => {
-  console.log(chats);
-  console.log(import.meta.env.URL_ADDRESS);
-  const headers = new axios.AxiosHeaders(
-    {
-      dangerouslyAllowBrowser: true,
-    },
-  );
+
   const requestBody = {
     model: import.meta.env.VITE_MODEL_TYPE,
     messages: chats,
