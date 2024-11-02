@@ -5,7 +5,25 @@
 </template>
 
 <script setup lang="ts">
-const pdfUrl = new URL('@/assets/source.pdf', import.meta.url).href;
+import { computed, ref, watch } from "vue";
+
+const props = defineProps<{
+  page: number;
+}>();
+
+const pageNum = ref(0);
+
+const pdfUrl = computed<string>(() => {
+  const baseUrl = new URL("@/assets/source.pdf", import.meta.url).href;
+  return `${baseUrl}#page=${pageNum.value}`;
+});
+
+watch(
+  () => props.page,
+  () => {
+    pageNum.value = props.page;
+  },
+);
 </script>
 
 <style scoped></style>

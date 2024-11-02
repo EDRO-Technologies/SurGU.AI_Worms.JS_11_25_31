@@ -3,11 +3,14 @@
     <div class="absolute left-10 top-1 font-bold">WormsAI</div>
     <el-tabs v-model="activeName" stretch>
       <el-tab-pane label="Чат" name="first">
-        <ChatsContainer class="flex-1 p-2 h-[80vh] overflow-scroll" />
+        <ChatsContainer
+          class="flex-1 p-2 h-[80vh] overflow-scroll"
+          @navigate-to-pdf="navigateToPdf"
+        />
         <ChatBox />
       </el-tab-pane>
       <el-tab-pane label="Документ" name="second">
-        <PdfView />
+        <PdfView :page="pdfPage" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -20,4 +23,10 @@ import { ref } from "vue";
 import PdfView from "@/components/PdfView.vue";
 
 const activeName = ref("first");
+const pdfPage = ref(1);
+
+const navigateToPdf = (pageNum: number) => {
+  activeName.value = "second";
+  pdfPage.value = pageNum;
+};
 </script>

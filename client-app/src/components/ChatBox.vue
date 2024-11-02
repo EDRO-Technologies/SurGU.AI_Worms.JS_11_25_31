@@ -7,9 +7,9 @@
         class="w-full outline-none"
         placeholder="Спросите wormy..."
       />
-      <div class="flex gap-2">
-        <el-button type="info" circle @click="sendChats" :icon="ArrowRightBold">
-        </el-button>
+      <div class="flex" v-loading="isLoading">
+        <el-button type="primary" circle @click="sendChats" :icon="ArrowRightBold" />
+        <el-button type="danger" circle @click="clearChat" :icon="CloseBold" />
       </div>
     </div>
   </div>
@@ -17,21 +17,37 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { ArrowRightBold } from "@element-plus/icons-vue";
+import { ArrowRightBold, CloseBold } from "@element-plus/icons-vue";
 import { sendAllMessages } from "@/service";
-import { CHATS } from "@/stores/chat";
+import { CHATS, clearHistory } from "@/stores/chat";
+import { ElMessage } from "element-plus";
 
 
 const message = ref("");
+const isLoading = ref(false);
 
 const sendChats = async () => {
+  if (!message.value.trim()) return;
+
   const userMessage = {
     role: "user",
     content: message.value,
   };
-  CHATS.value.push(userMessage);
 
-  let chatGPTMessage = await sendAllMessages(CHATS.value);
-  CHATS.value.push(chatGPTMessage);
+  CHATS.value.push(userMessage);
+  isLoading.value = true;
+  let chatMessage = await sendAllMessages(CHATS.value);
+  CHATS.value.push(chatMessage);
+  isLoading.value = false;
+
+  message.value = "";
+};
+
+const clearChat = () => {
+  clearHistory();
+  ElMessage({
+    message: "Память очищена",
+    type: "error",
+  });
 };
 </script>
