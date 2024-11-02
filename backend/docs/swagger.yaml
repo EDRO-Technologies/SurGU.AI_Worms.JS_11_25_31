@@ -1,0 +1,44 @@
+definitions:
+  types.Message:
+    properties:
+      content:
+        type: string
+      is_ai:
+        type: boolean
+    type: object
+  types.Prompt:
+    properties:
+      act_id:
+        type: integer
+      msg:
+        items:
+          $ref: '#/definitions/types.Message'
+        type: array
+    type: object
+info:
+  contact: {}
+paths:
+  /api/prompt:
+    post:
+      consumes:
+      - application/json
+      description: Post prompt
+      parameters:
+      - description: prompt
+        in: body
+        name: prompt
+        required: true
+        schema:
+          $ref: '#/definitions/types.Prompt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: PostPrompt
+      tags:
+      - Prompts
+swagger: "2.0"
