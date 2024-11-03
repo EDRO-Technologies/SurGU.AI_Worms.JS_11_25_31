@@ -8,7 +8,5 @@ import (
 )
 
 func SetupProductsRoutes(router fiber.Router) {
-
-	router.Post("/prompt", mw.RateLimit(C.Tier3, 0), controllers.PostPrompt)
-
+	router.Post("/prompt", mw.RateLimit(C.Tier6, 0), controllers.PostPrompt)
 }

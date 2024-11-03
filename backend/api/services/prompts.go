@@ -12,6 +12,14 @@ import (
 	T "worm-pack/types"
 )
 
+func Map[T, V any](ts []T, fn func(T) V) []V {
+	result := make([]V, len(ts))
+	for i, t := range ts {
+		result[i] = fn(t)
+	}
+	return result
+}
+
 type DimaRequestMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
@@ -37,17 +45,19 @@ func BoolRoleToString(isAI bool) string {
 	}
 }
 
-func GetFederalChapter(prompt T.Prompt) (string, *T.ServiceError) {
+func GetAnswered(prompt T.Prompt) (string, *T.ServiceError) {
 	if len(prompt.Message) == 0 {
 		return "", nil
 	}
 
-	req := MakeDimaRequest([]DimaRequestMessage{
-		{
-			Role:    BoolRoleToString(prompt.Message[0].IsAI),
-			Content: prompt.Message[0].Content,
-		},
+	msgs := Map(prompt.Message, func(item T.Message) DimaRequestMessage {
+		return DimaRequestMessage{
+			Role:    BoolRoleToString(item.IsAI),
+			Content: item.Content,
+		}
 	})
+
+	req := MakeDimaRequest(msgs)
 
 	reqJSON, err := json.Marshal(req)
 	if err != nil {
@@ -77,7 +87,11 @@ func GetFederalChapter(prompt T.Prompt) (string, *T.ServiceError) {
 
 	res, err := client.Do(promptReq)
 
-	defer res.Body.Close()
+	if res.Body == nil {
+		return "", &T.ServiceError{
+			Message: "Flawed response from LLM",
+		}
+	}
 
 	body, err := io.ReadAll(res.Body)
 

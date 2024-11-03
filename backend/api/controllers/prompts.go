@@ -52,7 +52,7 @@ func PostPrompt(ctx *fiber.Ctx) error {
 		return H.BuildError(ctx, "Invalid JSON", fiber.StatusBadRequest, err)
 	}
 
-	response, serviceErr := S.GetFederalChapter(prompt)
+	response, serviceErr := S.GetAnswered(prompt)
 	if serviceErr != nil {
 		return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
 	}
@@ -63,16 +63,6 @@ func PostPrompt(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-
-	//federalArticle, serviceErr := S.GetFederalArticle(ctx.UserContext())
-	//if serviceErr != nil {
-	//	return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
-	//}
-
-	//answer, serviceErr := S.GetFinalAnswer(ctx.UserContext())
-	//if serviceErr != nil {
-	//	return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
-	//}
 
 	var apiResponse = MakeApiRequest(content)
 
@@ -82,46 +72,49 @@ func PostPrompt(ctx *fiber.Ctx) error {
 	})
 }
 
-// PingPong
-// @Summary        PingPong
-// @Description    Post prompt
-// @Tags           Prompts
-// @Accept         json
-// @Produce        json
-// @Param          prompt  body    types.Prompt   true    "prompt"  example({"model": "text-davinci-003", "messages": [{"role": "user", "content": "Hello, how are you?"}]})
-// @Success        200     {object}  map[string]interface{}
-// @Router         /api/prompt [post]
-func PingPong(ctx *fiber.Ctx) error {
-	var prompt T.Prompt
-
-	if err := ctx.BodyParser(&prompt); err != nil {
-		return H.BuildError(ctx, "Invalid JSON", fiber.StatusBadRequest, err)
-	}
-
-	response, serviceErr := S.GetFederalChapter(prompt)
-	if serviceErr != nil {
-		return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
-	}
-
-	var content federalChapter
-
-	err := json.Unmarshal([]byte(response), &content)
-	if err != nil {
-		return err
-	}
-
-	//federalArticle, serviceErr := S.GetFederalArticle(ctx.UserContext())
-	//if serviceErr != nil {
-	//	return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
-	//}
-
-	//answer, serviceErr := S.GetFinalAnswer(ctx.UserContext())
-	//if serviceErr != nil {
-	//	return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
-	//}
-
-	return H.Success(ctx, fiber.Map{
-		"ok":             1,
-		"federalChapter": content,
-	})
-}
+//
+//// PingPong
+//// @Summary        PingPong
+//// @Description    Post prompt
+//// @Tags           Prompts
+//// @Accept         json
+//// @Produce        json
+//// @Param          prompt  body    types.Prompt   true    "prompt"  example({"model": "text-davinci-003", "messages": [{"role": "user", "content": "Hello, how are you?"}]})
+//// @Success        200     {object}  map[string]interface{}
+//// @Router         /api/legendaryPrompt [post]
+//func PingPong(ctx *fiber.Ctx) error {
+//	var prompt T.Prompt
+//
+//	if err := ctx.BodyParser(&prompt); err != nil {
+//		return H.BuildError(ctx, "Invalid JSON", fiber.StatusBadRequest, err)
+//	}
+//
+//	response, serviceErr := S.GetAnswered(prompt)
+//	if serviceErr != nil {
+//		return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
+//	}
+//
+//	var content federalChapter
+//
+//	err := json.Unmarshal([]byte(response), &content)
+//	if err != nil {
+//		return err
+//	}
+//
+//	var chapter = MakeApiRequest(content).
+//
+//	//federalArticle, serviceErr := S.GetFederalArticle(ctx.UserContext())
+//	//if serviceErr != nil {
+//	//	return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
+//	//}
+//
+//	//answer, serviceErr := S.GetFinalAnswer(ctx.UserContext())
+//	//if serviceErr != nil {
+//	//	return H.BuildError(ctx, serviceErr.Message, serviceErr.Code, serviceErr.Error)
+//	//}
+//
+//	return H.Success(ctx, fiber.Map{
+//		"ok":             1,
+//		"federalChapter": apiResponse,
+//	})
+//}
