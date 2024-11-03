@@ -8,8 +8,8 @@ import (
 )
 
 func SetupProductsRoutes(router fiber.Router) {
-	router.Post("/prompt", mw.RateLimit(C.Tier7, 0), controllers.PostPrompt)
+	router.Post("/prompt-2", mw.RateLimit(C.Tier7, 0), controllers.PostPrompt)
 
-	router.Post("/legendaryPrompt", mw.RateLimit(C.Tier7, 0), controllers.PingPong)
+	router.Post("/prompt", mw.RateLimit(C.Tier7, 0), controllers.PingPong)
 
 }
