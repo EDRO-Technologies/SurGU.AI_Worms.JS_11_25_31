@@ -51,7 +51,8 @@ async def echo(message: types.Message):
     page_number = response.get("federalChapter").get("page_number")
     curr_history.append(ChatMessage(is_ai=True, content=f"{answer}"))
     print(curr_history)
-    await message.answer(answer + f"\n\n{config.FRONTEND_URL}/{page_number}", parse_mode=ParseMode.MARKDOWN)
+    link = f"\n\n{config.FRONTEND_URL}/{page_number}" if page_number > 0 else ""
+    await message.answer(answer + link, parse_mode=ParseMode.MARKDOWN)
 
 
 async def main():
