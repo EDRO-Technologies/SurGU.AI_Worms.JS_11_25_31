@@ -4,6 +4,41 @@
         "contact": {}
     },
     "paths": {
+        "/api/legendaryPrompt": {
+            "post": {
+                "description": "Post prompt",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Prompts"
+                ],
+                "summary": "PingPong",
+                "parameters": [
+                    {
+                        "description": "prompt",
+                        "name": "prompt",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.Prompt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/prompt": {
             "post": {
                 "description": "Post prompt",

@@ -2,7 +2,7 @@ package db
 
 import T "worm-pack/types"
 
-var examples = []T.Chapter{
+var mainArticle = []T.Chapter{
 	T.Chapter{
 
 		Title:       `Глава 1. ОБЩИЕ ПОЛОЖЕНИЯ`,
@@ -3486,5 +3486,5 @@ var examples = []T.Chapter{
 }
 
 func Init_db() []T.Chapter {
-	return examples
+	return mainArticle
 }

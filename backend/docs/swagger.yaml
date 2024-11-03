@@ -18,6 +18,29 @@ definitions:
 info:
   contact: {}
 paths:
+  /api/legendaryPrompt:
+    post:
+      consumes:
+      - application/json
+      description: Post prompt
+      parameters:
+      - description: prompt
+        in: body
+        name: prompt
+        required: true
+        schema:
+          $ref: '#/definitions/types.Prompt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: PingPong
+      tags:
+      - Prompts
   /api/prompt:
     post:
       consumes:

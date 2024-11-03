@@ -83,9 +83,17 @@ func GetAnswered(prompt T.Prompt) (string, *T.ServiceError) {
 
 	promptReq.Header.Set("Content-Type", "application/json")
 
-	client := http.Client{Timeout: 3 * time.Second}
+	client := http.Client{Timeout: 80 * time.Second}
 
 	res, err := client.Do(promptReq)
+
+	if err != nil {
+		return "", &T.ServiceError{
+			Message: "Ploho",
+			Error:   err,
+			Code:    fiber.StatusInternalServerError,
+		}
+	}
 
 	if res.Body == nil {
 		return "", &T.ServiceError{
