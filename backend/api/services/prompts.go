@@ -38,14 +38,16 @@ func BoolRoleToString(isAI bool) string {
 }
 
 func GetFederalChapter(prompt T.Prompt) (string, *T.ServiceError) {
+	if len(prompt.Message) == 0 {
+		return "", nil
+	}
+
 	req := MakeDimaRequest([]DimaRequestMessage{
 		{
 			Role:    BoolRoleToString(prompt.Message[0].IsAI),
 			Content: prompt.Message[0].Content,
 		},
 	})
-
-	_ = req
 
 	reqJSON, err := json.Marshal(req)
 	if err != nil {

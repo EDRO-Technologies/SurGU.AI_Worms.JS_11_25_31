@@ -1,36 +1,9 @@
 version: '3'
 
 services:
-  dimallm:
-    image: vllm/vllm-openai:latest
-    restart: always
-    shm_size: '64gb'
-    expose:
-      - 5000
-    volumes:
-      - cache:/workspace/.cache
-    networks:
-      - plusvibe
-    entrypoint: python3
-    command: -m Vikhrmodels/Vikhr-7b-0.1 --port=5000 --host=0.0.0.0 
+  backend:
+    build: ./backend
+    ports:
+      - "7000:70"
     environment:
-      - NCCL_IGNORE_DISABLED_P2P=1
-      HUGGING_FACE_HUB_TOKEN: #AYE MATE
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://0.0.0.0:5000/v1/chat/completions" ]
-      interval: 30s
-      timeout: 5s
-      retries: 20
-    deploy:
-      resources:
-        reservations:
-          devices:
-          - driver: nvidia
-            device_ids: ['0', '1']
-            capabilities: [gpu]
-
-volumes:
-  cache:
-  save:
-networks:
-  plusvibe:
+      CONFIG_FILE: ./.env
