@@ -1,10 +1,33 @@
 version: '3'
-
+# docker exec -it my_vllm_container bash -c "vllm serve Vikhrmodels/Vikhr-Llama-3.2-1B-Instruct --max_model_len=10000" 
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "7000:70"
-    environment:
-      CONFIG_FILE: ./.env
+  dimallm:
+    image: vllm/vllm-openai:latest
     restart: always
+    shm_size: '64gb'
+    ports:
+      - 8000:8000
+    volumes:
+      - ./cache:/workspace/.cache
+    command:  --dtype=half --enable-chunked-prefill --max_model_len=10000 --gpu_memory_utilization=0.9 --port=5000 ${H2OGPT_VLLM_ARGS}
+    environment:
+      VLLM_ALLOW_LONG_MAX_MODEL_LEN: 1
+      NCCL_IGNORE_DISABLED_P2P: 1
+      HUGGING_FACE_HUB_TOKEN: #AYE MATE
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:5000/v1/chat/completions" ]
+      interval: 30s
+      timeout: 5s
+      retries: 20
+    deploy:
+      resources:
+          reservations:
+              devices:
+                  - driver: nvidia
+                    count: all
+                    capabilities:
+                        - gpu
+
+volumes:
+  cache:
+  save:
