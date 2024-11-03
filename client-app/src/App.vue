@@ -9,7 +9,7 @@
         />
         <ChatBox />
       </el-tab-pane>
-      <el-tab-pane label="Документ" name="second">
+      <el-tab-pane class="h-[90vh]" label="Документ" name="second">
         <PdfView :page="computedPdfPage" />
       </el-tab-pane>
     </el-tabs>
@@ -33,6 +33,5 @@ const computedPdfPage = computed({
 const navigateToPdf = (pageNum: number) => {
   activeName.value = "second";
   computedPdfPage.value = pageNum;
-  console.log(computedPdfPage.value);
 };
 </script>

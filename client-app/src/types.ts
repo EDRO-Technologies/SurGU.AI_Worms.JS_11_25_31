@@ -1,6 +1,7 @@
 export type CHAT = {
   role: string;
   content: string;
+  pageNumber: number
 };
 
 export type RESPONSE = {

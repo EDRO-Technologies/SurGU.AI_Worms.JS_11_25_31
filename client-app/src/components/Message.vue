@@ -6,7 +6,7 @@
     >
       <div v-if="!isUser" class="font-bold">Wormy</div>
       <div v-html="markdownContent"></div>
-      <el-button type="primary" @click="navigateInPdf(30)">Открыть в документе</el-button>
+      <el-button class="mt-2" v-if="!isUser"  @click="navigateInPdf(30)">Открыть в документе</el-button>
     </div>
   </div>
 </template>

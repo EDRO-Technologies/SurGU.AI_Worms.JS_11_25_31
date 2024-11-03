@@ -1,5 +1,6 @@
 <template>
-  <div ref="chatsContainer">
+<!-- FIXME Костыль с id="chatsContainer" :D -->
+  <div id="chatsContainer" ref="chatsContainer">
     <Message
       v-for="(chat, index) of CHATS"
       :key="index"

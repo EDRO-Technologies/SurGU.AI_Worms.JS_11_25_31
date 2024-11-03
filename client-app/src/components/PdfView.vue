@@ -1,5 +1,5 @@
 <template>
-  <iframe :key="pdfUrl" :src="pdfUrl" width="100%" height="680"></iframe>
+  <iframe :key="pdfUrl" :src="pdfUrl" width="100%" height="100%"></iframe>
 </template>
 
 <script setup lang="ts">

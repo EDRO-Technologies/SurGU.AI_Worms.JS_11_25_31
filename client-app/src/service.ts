@@ -2,17 +2,39 @@ import type { CHAT } from "./types";
 import axios from "axios";
 
 
-export const sendAllMessages = async (chats: unknown) => {
+interface ApiRequestMessage {
+  is_ai: boolean,
+  content: string,
+}
 
+interface ApiRequestPrompt {
+  act_id: number,
+  msg: ApiRequestMessage[]
+}
+
+interface ApiResponse {
+  federalChapter: {
+    answer: string,
+    article_name: string,
+    chapter_name: string,
+    page_number: number
+  }
+}
+
+const URL = `${import.meta.env.VITE_BACKEND_URL}/api/prompt`;
+
+export const sendAllMessages = async (chats: unknown) => {
   const requestBody = {
-    model: import.meta.env.VITE_MODEL_TYPE,
-    messages: chats,
-  };
-  const { data } = await axios.post(import.meta.env.VITE_SERVER_ADDRESS, requestBody);
+    act_id: 0,
+    msg: chats.map(x => ({ is_ai: x.role === "assistant", content: x.content } as ApiRequestMessage))
+  } as ApiRequestPrompt;
+
+  const { data } = await axios.post<ApiResponse>(URL, requestBody);
 
   let responseMessage: CHAT = {
-    role: data.choices[0].message.role,
-    content: data.choices[0].message.content!,
+    role: "assistant",
+    content: data.federalChapter.answer,
+    pageNumber: data.federalChapter.page_number,
   };
 
   return responseMessage;

@@ -1,15 +1,18 @@
 <template>
+  <el-progress  v-if="isLoading" class="mb-1 mx-4" :duration="2" :show-text="false" :percentage="100" :indeterminate="true" />
+  <div v-else class="h-[6px]"/>
   <div class="flex gap-1">
-    <div class="flex-1 relative border border-gray-300 py-2 pl-4 pr-2.5 rounded-[40px] flex">
+    <div class="flex-1 flex-row relative border border-gray-300 py-2 pl-4 pr-2.5 rounded-[10px] flex">
       <input
         v-model="message"
         type="text"
         class="w-full outline-none"
         placeholder="Спросите wormy..."
+        @keydown="onEnter"
       />
-      <div class="flex" v-loading="isLoading">
-        <el-button type="primary" circle @click="sendChats" :icon="ArrowRightBold" />
+      <div disabled="isLoading" class="flex flex-row">
         <el-button type="danger" circle @click="clearChat" :icon="CloseBold" />
+        <el-button type="primary" circle @click="sendChats" :icon="ArrowRightBold" />
       </div>
     </div>
   </div>
@@ -26,6 +29,10 @@ import { ElMessage } from "element-plus";
 const message = ref("");
 const isLoading = ref(false);
 
+const delay = (delayInms) => {
+  return new Promise(resolve => setTimeout(resolve, delayInms));
+};
+
 const sendChats = async () => {
   if (!message.value.trim()) return;
 
@@ -34,13 +41,23 @@ const sendChats = async () => {
     content: message.value,
   };
 
-  CHATS.value.push(userMessage);
-  isLoading.value = true;
-  let chatMessage = await sendAllMessages(CHATS.value);
-  CHATS.value.push(chatMessage);
-  isLoading.value = false;
+  const div = document.querySelector("#chatsContainer");
 
   message.value = "";
+
+  const pushAndScroll = async (msg) => {
+    CHATS.value.push(msg);
+    await delay(10);
+    div.scrollTop = div.scrollHeight;
+  };
+
+  await pushAndScroll(userMessage);
+
+  isLoading.value = true;
+  const chatMessage = await sendAllMessages(CHATS.value);
+  isLoading.value = false;
+
+  await pushAndScroll(chatMessage);
 };
 
 const clearChat = () => {
@@ -49,5 +66,13 @@ const clearChat = () => {
     message: "Память очищена",
     type: "error",
   });
+};
+
+const onEnter = async (e) => {
+  if (e.key !== "Enter") {
+    return;
+  }
+
+  await sendChats();
 };
 </script>
