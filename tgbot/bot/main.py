@@ -1,8 +1,12 @@
 import asyncio
 import logging
+
+import httpx
 from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
 from aiogram.filters.command import Command
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
 from chat_history import ChatHistory, ChatMessage
 from config import Config
 from api.client import ApiClient
@@ -46,13 +50,31 @@ async def echo(message: types.Message):
         await message.answer("Для начала диалога со мной отправьте команду /start")
         return
     curr_history.append(ChatMessage(is_ai=False, content=message.text))
-    response = await api_client.send_prompt(history=curr_history)
+    try:
+        response = await api_client.send_prompt(history=curr_history)
+    except httpx.TimeoutException:
+        await message.answer("Странно, сервер долго не отвечает...")
+        return
+    except httpx.RemoteProtocolError:
+        await message.answer("Ой, похоже с сервером что-то не то...")
+        return
+    except httpx.ConnectError:
+        await message.answer("Хммм, попробуйте ещё...")
+        return
     answer = response.get("federalChapter").get("answer")
     page_number = response.get("federalChapter").get("page_number")
     curr_history.append(ChatMessage(is_ai=True, content=f"{answer}"))
     print(curr_history)
-    link = f"\n\n{config.FRONTEND_URL}/{page_number}" if page_number > 0 else ""
-    await message.answer(answer + link, parse_mode=ParseMode.MARKDOWN)
+    builder = None
+    if page_number > 0:
+        builder = InlineKeyboardBuilder()
+        builder.row(types.InlineKeyboardButton(
+            text="Перейти к источнику",
+            url=f"{config.FRONTEND_URL}/{page_number}"
+        ))
+    # link = f"\n\n{config.FRONTEND_URL}/{page_number}" if page_number > 0 else ""
+    markup = builder.as_markup() if builder is not None else builder
+    await message.answer(answer, parse_mode=ParseMode.MARKDOWN, reply_markup=markup)
 
 
 async def main():
