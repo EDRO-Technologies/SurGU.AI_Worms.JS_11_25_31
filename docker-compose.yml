@@ -7,3 +7,4 @@ services:
       - "7000:70"
     environment:
       CONFIG_FILE: ./.env
+    restart: always
